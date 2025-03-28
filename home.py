@@ -9,7 +9,6 @@ from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
 from chatbot import CarbonFootprintChatbot
-from location_services import LocationServices
 
 # Set wide layout and page name (must be first Streamlit command)
 st.set_page_config(layout="wide", page_title="Carbon Calculator")
@@ -19,194 +18,180 @@ st.markdown("""
     <style>
     /* Main background */
     .stApp {
-        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-        background-image: 
-            linear-gradient(135deg, #000000 0%, #1a1a1a 100%),
-            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-        background-size: 100% 100%, 30px 30px;
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
         min-height: 100vh;
         color: #ffffff;
         position: relative;
+        overflow-x: hidden;
+        font-size: 1.1rem;
+        padding-top: 0;
     }
     
+    /* Add a subtle pattern overlay */
     .stApp::before {
         content: '';
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: 
-            linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.03) 50%, transparent 52%),
-            linear-gradient(-45deg, transparent 48%, rgba(255, 255, 255, 0.03) 50%, transparent 52%);
-        background-size: 60px 60px;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
         pointer-events: none;
-        z-index: 0;
     }
     
     /* Title styling */
     .big-font {
-        font-size: 3.5rem !important;
+        font-size: 2.5rem !important;
         font-weight: 800;
         color: #ffffff;
         text-align: center;
-        margin-bottom: 2rem;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        letter-spacing: 1px;
-        position: relative;
-        z-index: 1;
-    }
-    
-    /* Tab styling */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 2rem;
-        background-color: transparent;
-        position: relative;
-        z-index: 1;
-    }
-    .stTabs [data-baseweb="tab"] {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
-        padding: 15px 30px;
-        margin: 0 5px;
-        transition: all 0.3s ease;
-        color: #ffffff;
-        font-weight: 500;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        z-index: 1;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: rgba(255, 255, 255, 0.15) !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        transform: translateY(-2px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    /* Card styling */
-    .stMarkdown {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        padding: 25px;
-        margin: 15px 0;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        position: relative;
-        z-index: 1;
-    }
-    
-    /* Header styling */
-    .stHeader {
-        color: #ffffff;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        margin-bottom: 1rem;
         letter-spacing: 0.5px;
         position: relative;
         z-index: 1;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        padding: 0.2rem 0;
     }
     
-    /* Subheader styling */
-    .stSubheader {
+    /* Tab styling */
+    .stTabs [data-baseweb="tab"] {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 10px 20px;
+        margin: 0 5px;
         color: #ffffff;
         font-weight: 600;
-        margin-bottom: 1rem;
-        letter-spacing: 0.3px;
+        font-size: 1.1rem;
+        border: none;
         position: relative;
         z-index: 1;
+        transition: all 0.2s ease;
+    }
+    
+    /* Remove extra padding from main container */
+    .main .block-container {
+        padding-top: 0;
+        max-width: 100%;
+    }
+    
+    /* Adjust header spacing */
+    .stHeader {
+        margin-bottom: 1rem;
+        font-size: 2rem;
+    }
+    
+    /* Adjust subheader spacing */
+    .stSubheader {
+        margin-bottom: 0.8rem;
+        font-size: 1.5rem;
+    }
+    
+    /* Adjust card spacing */
+    .stCard {
+        margin: 8px 0;
+        padding: 15px;
+    }
+    
+    /* Adjust expander spacing */
+    .streamlit-expanderHeader {
+        padding: 0.3rem 0.8rem;
+    }
+    
+    /* Adjust container spacing */
+    .stContainer {
+        margin-bottom: 0.8rem;
+    }
+    
+    /* Adjust column spacing */
+    .row-widget.stHorizontal > div {
+        margin-bottom: 0.8rem;
+    }
+    
+    /* Tab styling */
+    .stTabs [aria-selected="true"] {
+        background: rgba(255, 255, 255, 0.2) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        border: none;
+        font-weight: 700;
     }
     
     /* Button styling */
     .stButton>button {
-        background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+        background: #4a90e2;
         color: white;
         border: none;
-        border-radius: 30px;
+        border-radius: 12px;
         padding: 12px 30px;
         font-weight: 600;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font-size: 1.1rem;
+        transition: all 0.2s ease;
+        text-transform: none;
+        letter-spacing: 0.5px;
         position: relative;
         z-index: 1;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
+    
     .stButton>button:hover {
-        background: linear-gradient(135deg, #0083b0 0%, #00b4db 100%);
+        background: #357abd;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
     
     /* Input styling */
-    .stSelectbox, .stSlider {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
-        padding: 15px;
-        margin-bottom: 1rem;
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        z-index: 1;
-    }
-    
-    /* Success message styling */
-    .stSuccess {
-        background: linear-gradient(135deg, rgba(40, 167, 69, 0.2) 0%, rgba(40, 167, 69, 0.1) 100%);
-        border-radius: 15px;
-        padding: 20px;
-        margin: 15px 0;
-        border: 1px solid rgba(40, 167, 69, 0.3);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        position: relative;
-        z-index: 1;
-    }
-    
-    /* Info message styling */
-    .stInfo {
-        background: linear-gradient(135deg, rgba(23, 162, 184, 0.2) 0%, rgba(23, 162, 184, 0.1) 100%);
-        border-radius: 15px;
-        padding: 20px;
-        margin: 15px 0;
-        border: 1px solid rgba(23, 162, 184, 0.3);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        position: relative;
-        z-index: 1;
-    }
-    
-    /* Plotly chart container */
-    .js-plotly-plot {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        border-radius: 20px;
-        padding: 20px;
-        margin: 15px 0;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        z-index: 1;
-    }
-    
-    /* Chat input styling */
     .stTextInput>div>div>input {
-        border-radius: 30px;
-        padding: 15px 25px;
-        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 15px 20px;
+        background: rgba(255, 255, 255, 0.1);
         color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
         font-size: 1.1rem;
         position: relative;
         z-index: 1;
+        transition: all 0.2s ease;
+    }
+    
+    .stTextInput>div>div>input:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
     }
     
     /* Chat message styling */
     .chat-message {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
         padding: 20px;
         margin: 15px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         position: relative;
         z-index: 1;
+        color: #ffffff;
+        font-size: 1.1rem;
+    }
+    
+    /* Plotly chart container */
+    .js-plotly-plot {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 15px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Remove unwanted boxes */
+    .stMarkdown {
+        background: none;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        color: #ffffff;
+        font-size: 1.1rem;
     }
     
     /* Custom scrollbar */
@@ -215,24 +200,264 @@ st.markdown("""
     }
     
     ::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
     }
     
     ::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.2);
-        border-radius: 5px;
+        border-radius: 6px;
     }
     
     ::-webkit-scrollbar-thumb:hover {
         background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Select box styling */
+    .stSelectbox>div>div>select {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 15px 20px;
+        color: #ffffff;
+        font-size: 1.1rem;
+    }
+
+    /* Slider styling */
+    .stSlider>div>div>div {
+        background: #4a90e2;
+    }
+
+    /* Info message styling */
+    .stInfo {
+        background: rgba(33, 150, 243, 0.1);
+        border: 2px solid rgba(33, 150, 243, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        color: #64b5f6;
+        font-size: 1.1rem;
+    }
+
+    /* Warning message styling */
+    .stWarning {
+        background: rgba(255, 152, 0, 0.1);
+        border: 2px solid rgba(255, 152, 0, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        color: #ffd54f;
+        font-size: 1.1rem;
+    }
+
+    /* Success message styling */
+    .stSuccess {
+        background: rgba(76, 175, 80, 0.1);
+        border: 2px solid rgba(76, 175, 80, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        color: #81c784;
+        font-size: 1.1rem;
+    }
+
+    /* Error message styling */
+    .stError {
+        background: rgba(244, 67, 54, 0.1);
+        border: 2px solid rgba(244, 67, 54, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        color: #e57373;
+        font-size: 1.1rem;
+    }
+
+    /* Label styling */
+    .stLabel {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    /* Checkbox styling */
+    .stCheckbox>label {
+        font-size: 1.1rem;
+        color: #ffffff;
+    }
+
+    /* Achievement card styling */
+    .achievement-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease;
+    }
+    
+    .achievement-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .achievement-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    
+    /* Progress bar styling */
+    .progress-bar {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        height: 20px;
+        margin: 10px 0;
+        overflow: hidden;
+    }
+    
+    .progress {
+        background: #4a90e2;
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+    
+    /* Challenge card styling */
+    .challenge-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 15px 0;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Emission previews */
+    .emission-preview {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px 0;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .emission-preview:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .emission-preview p {
+        margin: 0;
+        font-size: 1rem;
+        color: #4a90e2;
+    }
+
+    /* Total emissions */
+    .total-emissions {
+        background: rgba(74, 144, 226, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+        border: 2px solid rgba(74, 144, 226, 0.3);
+    }
+    
+    .total-emissions h3 {
+        margin: 0;
+        color: #4a90e2;
+        font-size: 1.5rem;
+    }
+
+    /* Certificate modal styling */
+    .certificate-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .certificate-content {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 800px;
+        width: 90%;
+        position: relative;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .certificate-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 24px;
+        cursor: pointer;
+        color: white;
+    }
+    
+    .certificate-border {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        position: relative;
+    }
+    
+    .certificate-border::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        pointer-events: none;
+    }
+    
+    .certificate-title {
+        font-size: 3rem;
+        color: #ffffff;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .certificate-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+    }
+    
+    .certificate-name {
+        font-size: 2.5rem;
+        color: #ffffff;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .certificate-description {
+        font-size: 1.2rem;
+        color: #ffffff;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    
+    .certificate-date {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-top: 20px;
+    }
+    
+    .certificate-seal {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        font-size: 3rem;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # Initialize services
 chatbot = CarbonFootprintChatbot()
-location_services = LocationServices()
 
 # Define emission factors (kg CO2e per unit)
 EMISSION_FACTORS = {
@@ -267,12 +492,29 @@ if 'calculation_results' not in st.session_state:
     st.session_state.calculation_results = None
 if 'emissions_data' not in st.session_state:
     st.session_state.emissions_data = None
+if 'challenges' not in st.session_state:
+    st.session_state.challenges = []
+if 'achievements' not in st.session_state:
+    st.session_state.achievements = []
+if 'carbon_journey' not in st.session_state:
+    st.session_state.carbon_journey = []
+if 'certificates' not in st.session_state:
+    st.session_state.certificates = []
+if 'certificate_progress' not in st.session_state:
+    st.session_state.certificate_progress = {
+        'Green Novice': {'earned': False, 'progress': 0},
+        'Eco Warrior': {'earned': False, 'progress': 0},
+        'Climate Champion': {'earned': False, 'progress': 0},
+        'Earth Guardian': {'earned': False, 'progress': 0}
+    }
+if 'show_certificate' not in st.session_state:
+    st.session_state.show_certificate = None
 
 # Main title with custom class
 st.markdown('<h1 class="big-font">🌍 Carbon Footprint Calculator</h1>', unsafe_allow_html=True)
 
-# Create tabs for different sections
-tab1, tab2, tab3 = st.tabs(["📊 Calculate", "🌱 Offset", "💬 Chat"])
+# Create tabs for different sections with reduced spacing
+tab1, tab2, tab3, tab4 = st.tabs(["📊 Calculate", "🌱 Offset", "💬 Chat", "🎮 Challenges"])
 
 with tab1:
     # Main calculation section
@@ -280,6 +522,16 @@ with tab1:
     
     # Create two columns for inputs
     col1, col2 = st.columns(2)
+    
+    # Initialize session state for real-time updates
+    if 'transport_emissions' not in st.session_state:
+        st.session_state.transport_emissions = 0
+    if 'energy_emissions' not in st.session_state:
+        st.session_state.energy_emissions = 0
+    if 'waste_emissions' not in st.session_state:
+        st.session_state.waste_emissions = 0
+    if 'diet_emissions' not in st.session_state:
+        st.session_state.diet_emissions = 0
     
     with col1:
         st.markdown('<h3 class="stSubheader">🚗 Transportation</h3>', unsafe_allow_html=True)
@@ -291,6 +543,19 @@ with tab1:
         if transport_type == "Airplane":
             flights = st.number_input("Number of flights per year", 0, 50, 0)
         
+        # Real-time transport emissions calculation
+        transport_emissions = distance * 365 * EMISSION_FACTORS["India"][transport_type]
+        if transport_type == "Airplane":
+            transport_emissions += flights * 1000 * EMISSION_FACTORS["India"]["Airplane"]
+        st.session_state.transport_emissions = transport_emissions
+        
+        # Show transport emissions preview
+        st.markdown(f"""
+            <div class="emission-preview">
+                <p>Estimated transport emissions: {transport_emissions/1000:.1f} t CO2/year</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
         st.markdown('<h3 class="stSubheader">💡 Energy</h3>', unsafe_allow_html=True)
         electricity = st.slider("Monthly electricity (kWh)", 0.0, 1000.0, 200.0)
         cooking_fuel = st.selectbox(
@@ -299,6 +564,19 @@ with tab1:
         )
         if cooking_fuel in ["LPG", "CNG"]:
             fuel_consumption = st.slider(f"Monthly {cooking_fuel} consumption (kg)", 0.0, 50.0, 10.0)
+        
+        # Real-time energy emissions calculation
+        energy_emissions = electricity * 12 * EMISSION_FACTORS["India"]["Electricity"]
+        if cooking_fuel in ["LPG", "CNG"]:
+            energy_emissions += fuel_consumption * 12 * EMISSION_FACTORS["India"][cooking_fuel]
+        st.session_state.energy_emissions = energy_emissions
+        
+        # Show energy emissions preview
+        st.markdown(f"""
+            <div class="emission-preview">
+                <p>Estimated energy emissions: {energy_emissions/1000:.1f} t CO2/year</p>
+            </div>
+        """, unsafe_allow_html=True)
     
     with col2:
         st.markdown('<h3 class="stSubheader">🗑️ Waste</h3>', unsafe_allow_html=True)
@@ -309,48 +587,118 @@ with tab1:
             "Metal": st.slider("Weekly metal waste (kg)", 0.0, 5.0, 0.5)
         }
         
+        # Real-time waste emissions calculation
+        waste_emissions = sum(waste * 52 * EMISSION_FACTORS["India"][waste_type] 
+                            for waste_type, waste in waste_types.items())
+        st.session_state.waste_emissions = waste_emissions
+        
+        # Show waste emissions preview
+        st.markdown(f"""
+            <div class="emission-preview">
+                <p>Estimated waste emissions: {waste_emissions/1000:.1f} t CO2/year</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
         st.markdown('<h3 class="stSubheader">🍽️ Diet</h3>', unsafe_allow_html=True)
         diet_type = st.selectbox(
             "Select your diet type",
             ["Vegan", "Vegetarian", "Non-vegetarian"]
         )
         meals_per_day = st.slider("Number of meals per day", 1, 5, 3)
-
-    # Calculate button
-    if st.button("Calculate Carbon Footprint"):
-        # Calculate total emissions
-        transport_emissions = distance * 365 * EMISSION_FACTORS["India"][transport_type]
-        if transport_type == "Airplane":
-            transport_emissions += flights * 1000 * EMISSION_FACTORS["India"]["Airplane"]
         
-        energy_emissions = electricity * 12 * EMISSION_FACTORS["India"]["Electricity"]
-        if cooking_fuel in ["LPG", "CNG"]:
-            energy_emissions += fuel_consumption * 12 * EMISSION_FACTORS["India"][cooking_fuel]
-        
-        waste_emissions = sum(waste * 52 * EMISSION_FACTORS["India"][waste_type] 
-                            for waste_type, waste in waste_types.items())
-        
+        # Real-time diet emissions calculation
         diet_emissions = meals_per_day * 365 * EMISSION_FACTORS["India"][diet_type]
+        st.session_state.diet_emissions = diet_emissions
         
-        total_emissions = transport_emissions + energy_emissions + waste_emissions + diet_emissions
+        # Show diet emissions preview
+        st.markdown(f"""
+            <div class="emission-preview">
+                <p>Estimated diet emissions: {diet_emissions/1000:.1f} t CO2/year</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Add CSS for emission previews
+    st.markdown("""
+        <style>
+        .emission-preview {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
         
+        .emission-preview:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .emission-preview p {
+            margin: 0;
+            font-size: 1rem;
+            color: #4a90e2;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Calculate total emissions
+    total_emissions = (st.session_state.transport_emissions + 
+                      st.session_state.energy_emissions + 
+                      st.session_state.waste_emissions + 
+                      st.session_state.diet_emissions)
+
+    # Show real-time total emissions
+    st.markdown(f"""
+        <div class="total-emissions">
+            <h3>Current Total Emissions: {total_emissions/1000:.1f} t CO2/year</h3>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Add CSS for total emissions
+    st.markdown("""
+        <style>
+        .total-emissions {
+            background: rgba(74, 144, 226, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid rgba(74, 144, 226, 0.3);
+        }
+        
+        .total-emissions h3 {
+            margin: 0;
+            color: #4a90e2;
+            font-size: 1.5rem;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Calculate button with animation
+    if st.button("Calculate Final Carbon Footprint", key="calculate_button"):
         # Store results in session state
         st.session_state.calculation_results = {
             "total": total_emissions,
-            "transport": transport_emissions,
-            "energy": energy_emissions,
-            "waste": waste_emissions,
-            "diet": diet_emissions
+            "transport": st.session_state.transport_emissions,
+            "energy": st.session_state.energy_emissions,
+            "waste": st.session_state.waste_emissions,
+            "diet": st.session_state.diet_emissions
         }
         
-        # Create data for visualization (convert to tonnes)
+        # Award Green Novice certificate for first calculation
+        if not st.session_state.certificate_progress['Green Novice']['earned']:
+            st.session_state.certificate_progress['Green Novice']['earned'] = True
+            st.session_state.certificate_progress['Green Novice']['progress'] = 1
+        
+        # Create data for visualization
         emissions_data = {
             'Category': ['Transportation', 'Energy', 'Waste', 'Diet'],
             'Emissions (t CO2)': [
-                transport_emissions/1000, 
-                energy_emissions/1000, 
-                waste_emissions/1000, 
-                diet_emissions/1000
+                st.session_state.transport_emissions/1000,
+                st.session_state.energy_emissions/1000,
+                st.session_state.waste_emissions/1000,
+                st.session_state.diet_emissions/1000
             ]
         }
         st.session_state.emissions_data = pd.DataFrame(emissions_data)
@@ -557,3 +905,241 @@ with tab3:
             st.rerun()
         else:
             st.warning("You've reached the maximum number of messages. Please clear the chat to continue.")
+
+with tab4:
+    st.markdown('<h2 class="stHeader">🎮 Carbon Footprint Challenges</h2>', unsafe_allow_html=True)
+    
+    # Weekly Challenge Section
+    st.markdown('<h3 class="stSubheader">Weekly Challenge</h3>', unsafe_allow_html=True)
+    weekly_challenge = {
+        'title': '🚶‍♂️ Walk or Cycle to Work',
+        'description': 'Replace your usual commute with walking or cycling for at least 3 days this week.',
+        'carbon_saving': '2.5 kg CO2',
+        'progress': 0,
+        'days': 7
+    }
+    
+    # Add challenge completion button
+    if st.button("Mark Day as Complete", key="challenge_button"):
+        weekly_challenge['progress'] += 1
+        if weekly_challenge['progress'] >= weekly_challenge['days']:
+            st.session_state.certificate_progress['Eco Warrior']['progress'] += 1
+            if st.session_state.certificate_progress['Eco Warrior']['progress'] >= 3:
+                st.session_state.certificate_progress['Eco Warrior']['earned'] = True
+    
+    st.markdown(f"""
+        <div class="stCard">
+            <h4>{weekly_challenge['title']}</h4>
+            <p>{weekly_challenge['description']}</p>
+            <p>Potential carbon saving: {weekly_challenge['carbon_saving']}</p>
+            <div class="progress-bar">
+                <div class="progress" style="width: {(weekly_challenge['progress']/weekly_challenge['days'])*100}%"></div>
+            </div>
+            <p>Days completed: {weekly_challenge['progress']}/{weekly_challenge['days']}</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Achievement Badges
+    st.markdown('<h3 class="stSubheader">🏆 Your Achievements</h3>', unsafe_allow_html=True)
+    achievements = [
+        {'name': '🌱 Green Starter', 'description': 'First carbon footprint calculation', 'icon': '🌱'},
+        {'name': '🚶‍♂️ Eco Walker', 'description': 'Walked/cycled 10km', 'icon': '🚶‍♂️'},
+        {'name': '💡 Energy Saver', 'description': 'Reduced energy consumption by 20%', 'icon': '💡'},
+        {'name': '♻️ Recycling Master', 'description': 'Properly sorted waste for 1 month', 'icon': '♻️'}
+    ]
+    
+    cols = st.columns(4)
+    for i, achievement in enumerate(achievements):
+        with cols[i]:
+            st.markdown(f"""
+                <div class="achievement-card">
+                    <div class="achievement-icon">{achievement['icon']}</div>
+                    <h4>{achievement['name']}</h4>
+                    <p>{achievement['description']}</p>
+                </div>
+            """, unsafe_allow_html=True)
+    
+    # Certificates Section
+    st.markdown('<h3 class="stSubheader">📜 Your Certificates</h3>', unsafe_allow_html=True)
+    
+    certificates = [
+        {
+            'name': '🌱 Green Novice',
+            'description': 'Completed first carbon footprint calculation',
+            'requirements': ['First calculation'],
+            'icon': '🌱',
+            'color': '#4CAF50',
+            'progress': st.session_state.certificate_progress['Green Novice']
+        },
+        {
+            'name': '🌿 Eco Warrior',
+            'description': 'Reduced carbon footprint by 20%',
+            'requirements': ['20% reduction'],
+            'icon': '🌿',
+            'color': '#8BC34A',
+            'progress': st.session_state.certificate_progress['Eco Warrior']
+        },
+        {
+            'name': '🌳 Climate Champion',
+            'description': 'Maintained low carbon footprint for 3 months',
+            'requirements': ['3 months low footprint'],
+            'icon': '🌳',
+            'color': '#2196F3',
+            'progress': st.session_state.certificate_progress['Climate Champion']
+        },
+        {
+            'name': '🌍 Earth Guardian',
+            'description': 'Achieved carbon neutrality',
+            'requirements': ['Carbon neutral'],
+            'icon': '🌍',
+            'color': '#9C27B0',
+            'progress': st.session_state.certificate_progress['Earth Guardian']
+        }
+    ]
+    
+    # Display certificates in a grid
+    cert_cols = st.columns(2)
+    for i, cert in enumerate(certificates):
+        with cert_cols[i % 2]:
+            progress = cert['progress']
+            earned_class = 'earned' if progress['earned'] else ''
+            st.markdown(f"""
+                <div class="certificate-card {earned_class}" style="background: {cert['color']}20; border: 2px solid {cert['color']};">
+                    <div class="certificate-icon" style="font-size: 3rem; margin-bottom: 1rem;">{cert['icon']}</div>
+                    <h4 style="color: {cert['color']}; margin-bottom: 0.5rem;">{cert['name']}</h4>
+                    <p style="margin-bottom: 1rem;">{cert['description']}</p>
+                    <div class="certificate-requirements">
+                        <p style="font-size: 0.9rem; color: #888;">Requirements:</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            {''.join([f'<li>• {req}</li>' for req in cert['requirements']])}
+                        </ul>
+                        <div class="progress-bar" style="margin-top: 1rem;">
+                            <div class="progress" style="width: {progress['progress']*100}%; background: {cert['color']};"></div>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">
+                            Progress: {progress['progress']*100}%
+                        </p>
+                    </div>
+                    <button class="certificate-button" style="
+                        background: {cert['color']};
+                        color: white;
+                        border: none;
+                        padding: 8px 16px;
+                        border-radius: 20px;
+                        margin-top: 1rem;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        opacity: {1 if progress['earned'] else 0.5};
+                    ">{'View Certificate' if progress['earned'] else 'Locked'}</button>
+                </div>
+            """, unsafe_allow_html=True)
+    
+    # Add CSS for certificates
+    st.markdown("""
+        <style>
+        .certificate-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .certificate-card.earned {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .certificate-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .certificate-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .certificate-button:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        .certificate-requirements {
+            text-align: left;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+# Add interactive tips section
+with st.expander("💡 Interactive Tips"):
+    st.markdown('<h3 class="stSubheader">Tips to Reduce Your Carbon Footprint</h3>', unsafe_allow_html=True)
+    tip_categories = {
+        "Transportation": [
+            "Use public transport or carpool",
+            "Walk or cycle for short distances",
+            "Maintain your vehicle properly",
+            "Consider electric or hybrid vehicles"
+        ],
+        "Energy": [
+            "Switch to LED bulbs",
+            "Use energy-efficient appliances",
+            "Install solar panels",
+            "Properly insulate your home"
+        ],
+        "Waste": [
+            "Reduce, reuse, and recycle",
+            "Compost organic waste",
+            "Avoid single-use plastics",
+            "Buy products with minimal packaging"
+        ],
+        "Diet": [
+            "Reduce meat consumption",
+            "Buy local and seasonal produce",
+            "Minimize food waste",
+            "Grow your own vegetables"
+        ]
+    }
+    
+    selected_category = st.selectbox("Select a category:", list(tip_categories.keys()))
+    for tip in tip_categories[selected_category]:
+        st.checkbox(tip)
+
+# Add certificate modal
+if st.session_state.show_certificate:
+    cert = st.session_state.show_certificate
+    st.markdown(f"""
+        <div class="certificate-modal" style="display: flex;">
+            <div class="certificate-content">
+                <div class="certificate-close" onclick="document.querySelector('.certificate-modal').style.display='none'">×</div>
+                <div class="certificate-border">
+                    <div class="certificate-icon">{cert['icon']}</div>
+                    <h1 class="certificate-title">Certificate of Achievement</h1>
+                    <h2 class="certificate-name">{cert['name']}</h2>
+                    <p class="certificate-description">{cert['description']}</p>
+                    <div class="certificate-requirements">
+                        <h3 style="color: white; margin-bottom: 10px;">Requirements Met:</h3>
+                        <ul style="list-style-type: none; padding-left: 0; color: white;">
+                            {''.join([f'<li>✓ {req}</li>' for req in cert['requirements']])}
+                        </ul>
+                    </div>
+                    <p class="certificate-date">Awarded on {datetime.now().strftime('%B %d, %Y')}</p>
+                    <div class="certificate-seal">🌍</div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Add JavaScript to handle modal closing
+    st.markdown("""
+        <script>
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('certificate-modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+        </script>
+    """, unsafe_allow_html=True)
