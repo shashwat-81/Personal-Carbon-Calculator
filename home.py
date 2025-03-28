@@ -14,6 +14,222 @@ from location_services import LocationServices
 # Set wide layout and page name (must be first Streamlit command)
 st.set_page_config(layout="wide", page_title="Carbon Calculator")
 
+# Add custom CSS for background and styling
+st.markdown("""
+    <style>
+    /* Main background */
+    .stApp {
+        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        background-image: 
+            linear-gradient(135deg, #000000 0%, #1a1a1a 100%),
+            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        background-size: 100% 100%, 30px 30px;
+        min-height: 100vh;
+        color: #ffffff;
+        position: relative;
+    }
+    
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.03) 50%, transparent 52%),
+            linear-gradient(-45deg, transparent 48%, rgba(255, 255, 255, 0.03) 50%, transparent 52%);
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    /* Title styling */
+    .big-font {
+        font-size: 3.5rem !important;
+        font-weight: 800;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 2rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2rem;
+        background-color: transparent;
+        position: relative;
+        z-index: 1;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 15px 30px;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+        color: #ffffff;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transform: translateY(-2px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Card styling */
+    .stMarkdown {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 25px;
+        margin: 15px 0;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Header styling */
+    .stHeader {
+        color: #ffffff;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        letter-spacing: 0.5px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Subheader styling */
+    .stSubheader {
+        color: #ffffff;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        letter-spacing: 0.3px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Button styling */
+    .stButton>button {
+        background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 1;
+    }
+    .stButton>button:hover {
+        background: linear-gradient(135deg, #0083b0 0%, #00b4db 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    /* Input styling */
+    .stSelectbox, .stSlider {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 15px;
+        margin-bottom: 1rem;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Success message styling */
+    .stSuccess {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.2) 0%, rgba(40, 167, 69, 0.1) 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 15px 0;
+        border: 1px solid rgba(40, 167, 69, 0.3);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Info message styling */
+    .stInfo {
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.2) 0%, rgba(23, 162, 184, 0.1) 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 15px 0;
+        border: 1px solid rgba(23, 162, 184, 0.3);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Plotly chart container */
+    .js-plotly-plot {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 20px;
+        padding: 20px;
+        margin: 15px 0;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Chat input styling */
+    .stTextInput>div>div>input {
+        border-radius: 30px;
+        padding: 15px 25px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Chat message styling */
+    .chat-message {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        border-radius: 20px;
+        padding: 20px;
+        margin: 15px 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Initialize services
 chatbot = CarbonFootprintChatbot()
 location_services = LocationServices()
@@ -52,21 +268,21 @@ if 'calculation_results' not in st.session_state:
 if 'emissions_data' not in st.session_state:
     st.session_state.emissions_data = None
 
-# Main title
-st.title("🌍 Carbon Footprint Calculator")
+# Main title with custom class
+st.markdown('<h1 class="big-font">🌍 Carbon Footprint Calculator</h1>', unsafe_allow_html=True)
 
 # Create tabs for different sections
-tab1, tab2, tab3 = st.tabs(["📊 Calculate", "🌍 Air Quality", "💬 Chat"])
+tab1, tab2, tab3 = st.tabs(["📊 Calculate", "🌱 Offset", "💬 Chat"])
 
 with tab1:
     # Main calculation section
-    st.header("Calculate Your Carbon Footprint")
+    st.markdown('<h2 class="stHeader">Calculate Your Carbon Footprint</h2>', unsafe_allow_html=True)
     
     # Create two columns for inputs
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("🚗 Transportation")
+        st.markdown('<h3 class="stSubheader">🚗 Transportation</h3>', unsafe_allow_html=True)
         transport_type = st.selectbox(
             "Select your primary mode of transport",
             ["Car", "Bus", "Train", "Motorcycle", "Airplane"]
@@ -75,7 +291,7 @@ with tab1:
         if transport_type == "Airplane":
             flights = st.number_input("Number of flights per year", 0, 50, 0)
         
-        st.subheader("💡 Energy")
+        st.markdown('<h3 class="stSubheader">💡 Energy</h3>', unsafe_allow_html=True)
         electricity = st.slider("Monthly electricity (kWh)", 0.0, 1000.0, 200.0)
         cooking_fuel = st.selectbox(
             "Select your cooking fuel",
@@ -85,7 +301,7 @@ with tab1:
             fuel_consumption = st.slider(f"Monthly {cooking_fuel} consumption (kg)", 0.0, 50.0, 10.0)
     
     with col2:
-        st.subheader("🗑️ Waste")
+        st.markdown('<h3 class="stSubheader">🗑️ Waste</h3>', unsafe_allow_html=True)
         waste_types = {
             "Organic": st.slider("Weekly organic waste (kg)", 0.0, 20.0, 2.0),
             "Plastic": st.slider("Weekly plastic waste (kg)", 0.0, 10.0, 1.0),
@@ -93,72 +309,49 @@ with tab1:
             "Metal": st.slider("Weekly metal waste (kg)", 0.0, 5.0, 0.5)
         }
         
-        st.subheader("🍽️ Diet")
+        st.markdown('<h3 class="stSubheader">🍽️ Diet</h3>', unsafe_allow_html=True)
         diet_type = st.selectbox(
             "Select your diet type",
             ["Vegan", "Vegetarian", "Non-vegetarian"]
         )
-        meals = st.number_input("Meals per day", 0, 6, 3)
+        meals_per_day = st.slider("Number of meals per day", 1, 5, 3)
 
     # Calculate button
-    if st.button("Calculate My Carbon Footprint"):
-        # Normalize inputs
-        if distance > 0:
-            distance = distance * 365  # Convert daily distance to yearly
-        if electricity > 0:
-            electricity = electricity * 12  # Convert monthly electricity to yearly
-        if meals > 0:
-            meals = meals * 365  # Convert daily meals to yearly
-        for waste_type, amount in waste_types.items():
-            if amount > 0:
-                waste_types[waste_type] = amount * 52  # Convert weekly waste to yearly
-
-        # Calculate carbon emissions
-        # Transportation
-        if transport_type == "Airplane":
-            transportation_emissions = (EMISSION_FACTORS["India"]["Airplane"] * distance * flights)
-        else:
-            transportation_emissions = EMISSION_FACTORS["India"][transport_type] * distance
-
-        # Energy
-        electricity_emissions = EMISSION_FACTORS["India"]["Electricity"] * electricity
-        if cooking_fuel in ["LPG", "CNG"]:
-            cooking_emissions = EMISSION_FACTORS["India"][cooking_fuel] * fuel_consumption * 12
-            electricity_emissions += cooking_emissions
-
-        # Diet
-        diet_emissions = EMISSION_FACTORS["India"][diet_type] * meals
-
-        # Waste
-        waste_emissions = sum(
-            EMISSION_FACTORS["India"][waste_type] * amount
-            for waste_type, amount in waste_types.items()
-        )
-
-        # Convert emissions to tonnes and round off to 2 decimal points
-        transportation_emissions = round(transportation_emissions / 1000, 2)
-        electricity_emissions = round(electricity_emissions / 1000, 2)
-        diet_emissions = round(diet_emissions / 1000, 2)
-        waste_emissions = round(waste_emissions / 1000, 2)
-
+    if st.button("Calculate Carbon Footprint"):
         # Calculate total emissions
-        total_emissions = round(
-            transportation_emissions + electricity_emissions + diet_emissions + waste_emissions, 2
-        )
-
-        # Store results
+        transport_emissions = distance * 365 * EMISSION_FACTORS["India"][transport_type]
+        if transport_type == "Airplane":
+            transport_emissions += flights * 1000 * EMISSION_FACTORS["India"]["Airplane"]
+        
+        energy_emissions = electricity * 12 * EMISSION_FACTORS["India"]["Electricity"]
+        if cooking_fuel in ["LPG", "CNG"]:
+            energy_emissions += fuel_consumption * 12 * EMISSION_FACTORS["India"][cooking_fuel]
+        
+        waste_emissions = sum(waste * 52 * EMISSION_FACTORS["India"][waste_type] 
+                            for waste_type, waste in waste_types.items())
+        
+        diet_emissions = meals_per_day * 365 * EMISSION_FACTORS["India"][diet_type]
+        
+        total_emissions = transport_emissions + energy_emissions + waste_emissions + diet_emissions
+        
+        # Store results in session state
         st.session_state.calculation_results = {
-            'transportation': transportation_emissions,
-            'electricity': electricity_emissions,
-            'diet': diet_emissions,
-            'waste': waste_emissions,
-            'total': total_emissions
+            "total": total_emissions,
+            "transport": transport_emissions,
+            "energy": energy_emissions,
+            "waste": waste_emissions,
+            "diet": diet_emissions
         }
         
-        # Create data for visualization
+        # Create data for visualization (convert to tonnes)
         emissions_data = {
-            'Category': ['Transportation', 'Electricity', 'Diet', 'Waste'],
-            'Emissions (tonnes CO2)': [transportation_emissions, electricity_emissions, diet_emissions, waste_emissions]
+            'Category': ['Transportation', 'Energy', 'Waste', 'Diet'],
+            'Emissions (t CO2)': [
+                transport_emissions/1000, 
+                energy_emissions/1000, 
+                waste_emissions/1000, 
+                diet_emissions/1000
+            ]
         }
         st.session_state.emissions_data = pd.DataFrame(emissions_data)
         
@@ -166,202 +359,122 @@ with tab1:
 
     # Display results if available
     if st.session_state.calculation_results is not None:
-        st.header("📊 Your Carbon Footprint Results")
+        st.markdown('<h2 class="stHeader">📊 Your Carbon Footprint Results</h2>', unsafe_allow_html=True)
 
         col3, col4 = st.columns(2)
 
         with col3:
-            st.subheader("Carbon Emissions by Category")
-            st.info(f"🚗 Transportation: {st.session_state.calculation_results['transportation']} tonnes CO2 per year")
-            st.info(f"💡 Electricity: {st.session_state.calculation_results['electricity']} tonnes CO2 per year")
-            st.info(f"🍽 Diet: {st.session_state.calculation_results['diet']} tonnes CO2 per year")
-            st.info(f"🗑 Waste: {st.session_state.calculation_results['waste']} tonnes CO2 per year")
+            st.markdown('<h3 class="stSubheader">Carbon Emissions by Category</h3>', unsafe_allow_html=True)
+            st.markdown(f"""
+                <div class="stMarkdown">
+                    <p>🚗 Transportation: {st.session_state.calculation_results['transport']/1000:.2f} t CO2 per year</p>
+                    <p>💡 Energy: {st.session_state.calculation_results['energy']/1000:.2f} t CO2 per year</p>
+                    <p>🍽 Diet: {st.session_state.calculation_results['diet']/1000:.2f} t CO2 per year</p>
+                    <p>🗑 Waste: {st.session_state.calculation_results['waste']/1000:.2f} t CO2 per year</p>
+                </div>
+            """, unsafe_allow_html=True)
 
         with col4:
-            st.subheader("Total Carbon Footprint")
-            st.success(f"🌍 Your total carbon footprint is: {st.session_state.calculation_results['total']} tonnes CO2 per year")
-            
-            # Add comparison with global average
-            global_average = 4.79  # Global average CO2 emissions per capita in 2021
-            india_average = 1.9    # India's average CO2 emissions per capita in 2021
-            
-            st.subheader("📈 Comparison with Averages")
-            st.info(f"🌐 Global Average: {global_average} tonnes CO2 per capita")
-            st.info(f"🇮🇳 India Average: {india_average} tonnes CO2 per capita")
-            
-            # Calculate percentage of global average
-            percentage_of_global = (st.session_state.calculation_results['total'] / global_average) * 100
-            st.warning(f"Your emissions are {percentage_of_global:.1f}% of the global average")
-
-        # Create and display pie chart
-        fig = px.pie(st.session_state.emissions_data, values='Emissions (tonnes CO2)', names='Category',
-                    title='Distribution of Your Carbon Emissions')
-        st.plotly_chart(fig, use_container_width=True)
-
-with tab2:
-    st.header("🌍 Air Quality Check")
-    
-    # Get user's location
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        latitude = st.number_input("Enter your latitude", -90.0, 90.0, 20.5937)
-    
-    with col2:
-        longitude = st.number_input("Enter your longitude", -180.0, 180.0, 78.9629)
-    
-    if st.button("Check Air Quality"):
-        # Get location details
-        location = location_services.get_location_from_coordinates(latitude, longitude)
-        if location:
-            st.info(f"📍 Location: {location}")
-        else:
-            st.error("❌ Could not find location details. Please check the coordinates.")
-        
-        # Get air quality data
-        air_quality_data = location_services.get_air_quality_data(latitude, longitude)
-        
-        if air_quality_data:
-            # Create a weather app-like layout
-            st.markdown("""
-                <style>
-                .weather-card {
-                    background-color: #2D2D2D;
-                    border-radius: 15px;
-                    padding: 20px;
-                    margin: 10px 0;
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                }
-                .aqi-value {
-                    font-size: 3rem;
-                    font-weight: bold;
-                    text-align: center;
-                    margin: 20px 0;
-                }
-                .aqi-label {
-                    font-size: 1.2rem;
-                    text-align: center;
-                    margin-bottom: 20px;
-                }
-                </style>
-            """, unsafe_allow_html=True)
-            
-            # Display AQI prominently
-            aqi_status, aqi_message = location_services.calculate_health_impact(air_quality_data['aqi'])
-            aqi_color = {
-                "Good": "#00C853",
-                "Moderate": "#FFD600",
-                "Unhealthy for Sensitive Groups": "#FF9800",
-                "Unhealthy": "#F44336",
-                "Very Unhealthy": "#9C27B0",
-                "Hazardous": "#880E4F"
-            }.get(aqi_status, "#FFFFFF")
-            
+            st.markdown('<h3 class="stSubheader">Total Carbon Footprint</h3>', unsafe_allow_html=True)
             st.markdown(f"""
-                <div class='weather-card'>
-                    <div class='aqi-value' style='color: {aqi_color};'>
-                        {air_quality_data['aqi']}
-                    </div>
-                    <div class='aqi-label' style='color: {aqi_color};'>
-                        {aqi_status}
-                    </div>
-                    <div style='text-align: center; color: #B0BEC5;'>
-                        {aqi_message}
-                    </div>
+                <div class="stMarkdown">
+                    <p>🌍 Your total carbon footprint is: {st.session_state.calculation_results['total']/1000:.2f} t CO2 per year</p>
                 </div>
             """, unsafe_allow_html=True)
             
-            # Display air quality metrics in a grid
-            st.subheader("📊 Air Quality Metrics")
-            col3, col4, col5 = st.columns(3)
+            # Add comparison with global average
+            global_average = 4.79  # Global average CO2 emissions per capita in 2021 (in tonnes)
+            india_average = 1.9    # India's average CO2 emissions per capita in 2021 (in tonnes)
             
-            with col3:
-                st.markdown(f"""
-                    <div class='weather-card'>
-                        <h3 style='text-align: center; color: #4CAF50;'>PM2.5</h3>
-                        <div style='text-align: center; font-size: 1.5rem;'>
-                            {air_quality_data['pm25']} µg/m³
-                        </div>
-                        <div style='text-align: center; color: #B0BEC5;'>
-                            Fine particulate matter
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
+            st.markdown('<h3 class="stSubheader">📈 Comparison with Averages</h3>', unsafe_allow_html=True)
+            st.markdown(f"""
+                <div class="stMarkdown">
+                    <p>🌐 Global Average: {global_average} t CO2 per capita</p>
+                    <p>🇮🇳 India Average: {india_average} t CO2 per capita</p>
+                </div>
+            """, unsafe_allow_html=True)
             
-            with col4:
-                st.markdown(f"""
-                    <div class='weather-card'>
-                        <h3 style='text-align: center; color: #2196F3;'>PM10</h3>
-                        <div style='text-align: center; font-size: 1.5rem;'>
-                            {air_quality_data['pm10']} µg/m³
-                        </div>
-                        <div style='text-align: center; color: #B0BEC5;'>
-                            Coarse particulate matter
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-            
-            with col5:
-                st.markdown(f"""
-                    <div class='weather-card'>
-                        <h3 style='text-align: center; color: #FF9800;'>Temperature</h3>
-                        <div style='text-align: center; font-size: 1.5rem;'>
-                            {air_quality_data['temperature']}°C
-                        </div>
-                        <div style='text-align: center; color: #B0BEC5;'>
-                            Current temperature
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-            
-            # Display weather conditions in a grid
-            st.subheader("🌤️ Weather Conditions")
-            col6, col7, col8 = st.columns(3)
-            
-            with col6:
-                st.markdown(f"""
-                    <div class='weather-card'>
-                        <h3 style='text-align: center; color: #00BCD4;'>Humidity</h3>
-                        <div style='text-align: center; font-size: 1.5rem;'>
-                            {air_quality_data['humidity']}%
-                        </div>
-                        <div style='text-align: center; color: #B0BEC5;'>
-                            Relative humidity
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-            
-            with col7:
-                st.markdown(f"""
-                    <div class='weather-card'>
-                        <h3 style='text-align: center; color: #9E9E9E;'>Wind Speed</h3>
-                        <div style='text-align: center; font-size: 1.5rem;'>
-                            {air_quality_data['wind_speed']} m/s
-                        </div>
-                        <div style='text-align: center; color: #B0BEC5;'>
-                            Current wind speed
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-            
-            with col8:
-                st.markdown(f"""
-                    <div class='weather-card'>
-                        <h3 style='text-align: center; color: #795548;'>Location</h3>
-                        <div style='text-align: center; font-size: 1.2rem;'>
-                            {location}
-                        </div>
-                        <div style='text-align: center; color: #B0BEC5;'>
-                            Current location
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-        else:
-            st.error("❌ Could not fetch air quality data. Please check your API key and try again.")
-            st.info("💡 Make sure you have set up your OpenAQ API key in the .env file.")
+            # Calculate percentage of global average
+            percentage_of_global = (st.session_state.calculation_results['total']/1000 / global_average) * 100
+            st.markdown(f"""
+                <div class="stMarkdown">
+                    <p>Your emissions are {percentage_of_global:.1f}% of the global average</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+        # Create and display pie chart
+        fig = px.pie(
+            st.session_state.emissions_data, 
+            values='Emissions (t CO2)', 
+            names='Category',
+            title='Distribution of Your Carbon Emissions',
+            color_discrete_sequence=['#3498db', '#2ecc71', '#e74c3c', '#f1c40f']
+        )
+        fig.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white', size=14),
+            title_font_color='white',
+            title_font_size=24,
+            height=600,  # Increased height
+            width=800,   # Increased width
+            showlegend=True,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1,
+                font=dict(color='white', size=14)
+            ),
+            margin=dict(t=50, b=50, l=50, r=50)
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+with tab2:
+    st.markdown('<h2 class="stHeader">🌱 Carbon Offset Options</h2>', unsafe_allow_html=True)
+    
+    if st.session_state.calculation_results:
+        total_emissions = st.session_state.calculation_results["total"]
+        st.markdown(f'<h3 class="stSubheader">Your Annual Carbon Footprint: {total_emissions:.2f} kg CO2e</h3>', unsafe_allow_html=True)
+        
+        # Offset options
+        st.markdown('<h3 class="stSubheader">Offset Your Carbon Footprint</h3>', unsafe_allow_html=True)
+        
+        # Tree planting option
+        trees_needed = total_emissions / 20  # Assuming each tree absorbs 20 kg CO2 per year
+        st.markdown(f"""
+            <div class="stMarkdown">
+                <h4>🌳 Option 1: Plant Trees</h4>
+                <p>• Number of trees needed: {trees_needed:.0f}</p>
+                <p>• Estimated cost: ₹{trees_needed * 100:.2f} (₹100 per tree)</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Renewable energy option
+        solar_panels = total_emissions / 500  # Assuming each panel reduces 500 kg CO2 per year
+        st.markdown(f"""
+            <div class="stMarkdown">
+                <h4>☀️ Option 2: Install Solar Panels</h4>
+                <p>• Number of panels needed: {solar_panels:.0f}</p>
+                <p>• Estimated cost: ₹{solar_panels * 15000:.2f} (₹15,000 per panel)</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Carbon credits option
+        credits_needed = total_emissions / 1000  # 1 credit = 1000 kg CO2
+        st.markdown(f"""
+            <div class="stMarkdown">
+                <h4>💳 Option 3: Purchase Carbon Credits</h4>
+                <p>• Number of credits needed: {credits_needed:.2f}</p>
+                <p>• Estimated cost: ₹{credits_needed * 1000:.2f} (₹1,000 per credit)</p>
+            </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.info("Please calculate your carbon footprint first in the Calculate tab.")
 
 with tab3:
-    st.header("💬 Chat with Eco Assistant")
+    st.markdown('<h2 class="stHeader">💬 Chat with Eco Assistant</h2>', unsafe_allow_html=True)
     
     # Initialize chat history if not exists
     if 'chat_history' not in st.session_state:
@@ -374,7 +487,7 @@ with tab3:
         with st.container():
             message_class = 'user' if message['is_user'] else 'bot'
             st.markdown(f"""
-                <div class='chat-message {message_class}'>
+                <div class="stMarkdown">
                     <div style='display: flex; align-items: center; margin-bottom: 0.5rem;'>
                         <span style='font-size: 1.2rem; margin-right: 0.5rem;'>
                             {'👤' if message['is_user'] else '🌱'}
