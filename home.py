@@ -18,16 +18,15 @@ st.markdown("""
     <style>
     /* Main background */
     .stApp {
-        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
         min-height: 100vh;
-        color: #ffffff;
-        position: relative;
-        overflow-x: hidden;
+        color: #2e4600;
+        font-family: 'Arial', sans-serif;
         font-size: 1.1rem;
         padding-top: 0;
     }
     
-    /* Add a subtle pattern overlay */
+    /* Add a subtle leaf pattern overlay */
     .stApp::before {
         content: '';
         position: absolute;
@@ -35,7 +34,8 @@ st.markdown("""
         left: 0;
         right: 0;
         bottom: 0;
-        background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        background: url('https://www.transparenttextures.com/patterns/leaf.png');
+        opacity: 0.1;
         pointer-events: none;
     }
     
@@ -43,29 +43,31 @@ st.markdown("""
     .big-font {
         font-size: 2.5rem !important;
         font-weight: 800;
-        color: #ffffff;
+        color: #2e4600;
         text-align: center;
         margin-bottom: 1rem;
         letter-spacing: 0.5px;
-        position: relative;
-        z-index: 1;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        padding: 0.2rem 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
     
     /* Tab styling */
     .stTabs [data-baseweb="tab"] {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 12px;
         padding: 10px 20px;
         margin: 0 5px;
-        color: #ffffff;
+        color: #2e4600;
         font-weight: 600;
         font-size: 1.1rem;
         border: none;
-        position: relative;
-        z-index: 1;
         transition: all 0.2s ease;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: rgba(255, 255, 255, 0.4) !important;
+        color: #2e4600 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        font-weight: 700;
     }
     
     /* Remove extra padding from main container */
@@ -107,18 +109,9 @@ st.markdown("""
         margin-bottom: 0.8rem;
     }
     
-    /* Tab styling */
-    .stTabs [aria-selected="true"] {
-        background: rgba(255, 255, 255, 0.2) !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        border: none;
-        font-weight: 700;
-    }
-    
     /* Button styling */
     .stButton>button {
-        background: #4a90e2;
+        background: #56ab2f;
         color: white;
         border: none;
         border-radius: 12px;
@@ -128,13 +121,11 @@ st.markdown("""
         transition: all 0.2s ease;
         text-transform: none;
         letter-spacing: 0.5px;
-        position: relative;
-        z-index: 1;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     
     .stButton>button:hover {
-        background: #357abd;
+        background: #3b7a1f;
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
@@ -143,44 +134,38 @@ st.markdown("""
     .stTextInput>div>div>input {
         border-radius: 12px;
         padding: 15px 20px;
-        background: rgba(255, 255, 255, 0.1);
-        color: #ffffff;
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.2);
+        color: #2e4600;
+        border: 2px solid rgba(255, 255, 255, 0.4);
         font-size: 1.1rem;
-        position: relative;
-        z-index: 1;
         transition: all 0.2s ease;
     }
     
     .stTextInput>div>div>input:focus {
-        border-color: #4a90e2;
-        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        border-color: #56ab2f;
+        box-shadow: 0 0 0 3px rgba(86, 171, 47, 0.2);
     }
     
     /* Chat message styling */
     .chat-message {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 12px;
         padding: 20px;
         margin: 15px 0;
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.4);
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        position: relative;
-        z-index: 1;
-        color: #ffffff;
+        color: #2e4600;
         font-size: 1.1rem;
     }
     
     /* Plotly chart container */
     .js-plotly-plot {
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(255, 255, 255, 0.2) !important;
         border-radius: 12px;
         padding: 20px;
         margin: 15px 0;
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        position: relative;
-        z-index: 1;
+        border: 2px solid rgba(255, 255, 255, 0.4);
     }
     
     /* Remove unwanted boxes */
@@ -200,17 +185,17 @@ st.markdown("""
     }
     
     ::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.2);
         border-radius: 6px;
     }
     
+    ::-webkit-scrollbar-thumb {
+        background: rgba(86, 171, 47, 0.4);
+        border-radius: 6px;
+    }
+    
     ::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(86, 171, 47, 0.6);
     }
 
     /* Select box styling */
@@ -348,110 +333,18 @@ st.markdown("""
 
     /* Total emissions */
     .total-emissions {
-        background: rgba(74, 144, 226, 0.2);
+        background: rgba(86, 171, 47, 0.2);
         border-radius: 15px;
         padding: 20px;
         margin: 20px 0;
         text-align: center;
-        border: 2px solid rgba(74, 144, 226, 0.3);
+        border: 2px solid rgba(86, 171, 47, 0.4);
     }
     
     .total-emissions h3 {
         margin: 0;
-        color: #4a90e2;
+        color: #2e4600;
         font-size: 1.5rem;
-    }
-
-    /* Certificate modal styling */
-    .certificate-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .certificate-content {
-        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-        padding: 40px;
-        border-radius: 20px;
-        text-align: center;
-        max-width: 800px;
-        width: 90%;
-        position: relative;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    }
-    
-    .certificate-close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 24px;
-        cursor: pointer;
-        color: white;
-    }
-    
-    .certificate-border {
-        border: 4px solid rgba(255, 255, 255, 0.3);
-        border-radius: 15px;
-        padding: 30px;
-        position: relative;
-    }
-    
-    .certificate-border::before {
-        content: '';
-        position: absolute;
-        top: -10px;
-        left: -10px;
-        right: -10px;
-        bottom: -10px;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        border-radius: 20px;
-        pointer-events: none;
-    }
-    
-    .certificate-title {
-        font-size: 3rem;
-        color: #ffffff;
-        margin-bottom: 20px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    
-    .certificate-icon {
-        font-size: 5rem;
-        margin-bottom: 20px;
-    }
-    
-    .certificate-name {
-        font-size: 2.5rem;
-        color: #ffffff;
-        margin-bottom: 10px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    
-    .certificate-description {
-        font-size: 1.2rem;
-        color: #ffffff;
-        margin-bottom: 30px;
-        line-height: 1.6;
-    }
-    
-    .certificate-date {
-        font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.8);
-        margin-top: 20px;
-    }
-    
-    .certificate-seal {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        font-size: 3rem;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -463,27 +356,27 @@ chatbot = CarbonFootprintChatbot()
 EMISSION_FACTORS = {
     "India": {
         # Transportation (kg CO2e per km)
-        "Car": 0.2,
-        "Bus": 0.1,
+        "Car": 0.16422,
+        "Bus": 0.56703,
         "Train": 0.05,
-        "Motorcycle": 0.1,
+        "Motorcycle": 0.02779,
         "Airplane": 0.25,
         
         # Energy (kg CO2e per kWh)
-        "Electricity": 0.85,
-        "LPG": 2.5,
+        "Electricity": 0.82,
+        "LPG": 2.98,
         "CNG": 2.2,
         
         # Diet (kg CO2e per meal)
-        "Vegan": 0.5,
-        "Vegetarian": 0.8,
-        "Non-vegetarian": 1.5,
+        "Vegan": 1.5,
+        "Vegetarian": 2.5,
+        "Non-vegetarian": 3.5,
         
         # Waste (kg CO2e per kg)
         "Organic": 0.5,
-        "Plastic": 2.5,
-        "Paper": 1.0,
-        "Metal": 2.0
+        "Plastic": 6.0,
+        "Paper": 1.2,
+        "Metal": 1.5
     }
 }
 
@@ -507,8 +400,6 @@ if 'certificate_progress' not in st.session_state:
         'Climate Champion': {'earned': False, 'progress': 0},
         'Earth Guardian': {'earned': False, 'progress': 0}
     }
-if 'show_certificate' not in st.session_state:
-    st.session_state.show_certificate = None
 
 # Main title with custom class
 st.markdown('<h1 class="big-font">🌍 Carbon Footprint Calculator</h1>', unsafe_allow_html=True)
@@ -659,17 +550,17 @@ with tab1:
     st.markdown("""
         <style>
         .total-emissions {
-            background: rgba(74, 144, 226, 0.2);
+            background: rgba(86, 171, 47, 0.2);
             border-radius: 15px;
             padding: 20px;
             margin: 20px 0;
             text-align: center;
-            border: 2px solid rgba(74, 144, 226, 0.3);
+            border: 2px solid rgba(86, 171, 47, 0.4);
         }
         
         .total-emissions h3 {
             margin: 0;
-            color: #4a90e2;
+            color: #2e4600;
             font-size: 1.5rem;
         }
         </style>
@@ -1107,39 +998,3 @@ with st.expander("💡 Interactive Tips"):
     selected_category = st.selectbox("Select a category:", list(tip_categories.keys()))
     for tip in tip_categories[selected_category]:
         st.checkbox(tip)
-
-# Add certificate modal
-if st.session_state.show_certificate:
-    cert = st.session_state.show_certificate
-    st.markdown(f"""
-        <div class="certificate-modal" style="display: flex;">
-            <div class="certificate-content">
-                <div class="certificate-close" onclick="document.querySelector('.certificate-modal').style.display='none'">×</div>
-                <div class="certificate-border">
-                    <div class="certificate-icon">{cert['icon']}</div>
-                    <h1 class="certificate-title">Certificate of Achievement</h1>
-                    <h2 class="certificate-name">{cert['name']}</h2>
-                    <p class="certificate-description">{cert['description']}</p>
-                    <div class="certificate-requirements">
-                        <h3 style="color: white; margin-bottom: 10px;">Requirements Met:</h3>
-                        <ul style="list-style-type: none; padding-left: 0; color: white;">
-                            {''.join([f'<li>✓ {req}</li>' for req in cert['requirements']])}
-                        </ul>
-                    </div>
-                    <p class="certificate-date">Awarded on {datetime.now().strftime('%B %d, %Y')}</p>
-                    <div class="certificate-seal">🌍</div>
-                </div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # Add JavaScript to handle modal closing
-    st.markdown("""
-        <script>
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('certificate-modal')) {
-                e.target.style.display = 'none';
-            }
-        });
-        </script>
-    """, unsafe_allow_html=True)
