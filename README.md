@@ -65,4 +65,4 @@ streamlit run home.py
 
 ## Contributing
 
-Feel free to submit issues and enhancement requests!  add on field to checkout the page # Personal Carbon Calculator
+Feel free to submit issues and enhancement requests!  add on field to checkout the page # Personal Carbon Calculator.
