@@ -43,7 +43,6 @@ pip install -r requirements.txt
 bash
 streamlit run home.py
 
-
 ## Usage
 
 1. Open your web browser and navigate to the URL shown in the terminal (typically http://localhost:8501)
